@@ -18,17 +18,18 @@ def always_red(bankroll):
 
 
 #Martingale-Strategy: always double your bet until you lose (long steady profits, but suddenly ending)
-def martingale(bankroll):
-    bet = 1
-    pockets = ["Red"] * 18 + ["Black"] * 18 + ["Green"] 
+#Us-American Roulette
+def martingale_us(bankroll):
+    bet = 0.01
+    pockets = ["Red"] * 18 + ["Black"] * 18 + ["Green"] * 2
     bankroll_history = []
-    while 0 < bankroll < 150: 
+    while bankroll > 0: 
         if bet > bankroll:
             bet = bankroll
         roll = random.choice(pockets)
         if roll == "Red":
             bankroll += bet
-            bet = .01
+            bet = 0.01
         else:
             bankroll -= bet
             bet *=2
@@ -65,7 +66,7 @@ def fibonacci_strategy(bankroll):
         bankroll_history.append(bankroll)
     return bankroll_history
 
-sns.set(rc={'figure.figsize':(11.7,8.27)})
+
 
 #Paroli-System (Reverse Martingale)
 #double the bet with every win
@@ -89,13 +90,15 @@ def reverse_martingale(bankroll):
     return bankroll_history
 
 
-for i in range(4):
-    plt.plot(martingale(bankroll=100), linewidth=2)
+sns.set(rc={'figure.figsize':(13.7,8.27)})
+
+for i in range(20):
+    plt.plot(martingale_us(bankroll=100), linewidth=2)
     
     
 plt.xlabel("Number of Games", fontsize=18, fontweight="bold")
 plt.ylabel("Bankroll", fontsize=18, fontweight="bold")
 plt.xticks(fontsize=16, fontweight="bold")
 plt.yticks(fontsize=16, fontweight="bold")
-plt.title("Bankroll Over Time", fontsize=22, fontweight="bold")
+plt.title("Us-American Martingale", fontsize=22, fontweight="bold")
 plt.show()
