@@ -2,9 +2,16 @@ import random;
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
+def get_eu_pockets():
+    return ["Red"] * 18 + ["Black"] * 18 + ["Green"]
+    
+def get_us_pockets():
+    return ["Red"] * 18 + ["Black"] * 18 + ["Green"] * 2
+
 def always_red(bankroll):
     bankroll = 100
-    pockets = ['Red'] * 18 + ['Black'] * 18 + ['Green'] * 2
+    pockets = get_us_pockets()
 
     bankroll_history = []
     while bankroll > 0 :
@@ -20,7 +27,7 @@ def always_red(bankroll):
 #Martingale-Strategy: always double your bet until you lose (long steady profits, but suddenly ending)
 def martingale_european(bankroll):
     bet = 0.01
-    pockets = ["Red"] * 18 + ["Black"] * 18 + ["Green"] 
+    pockets = get_eu_pockets() 
     bankroll_history = []
     while bankroll > 0: 
         if bet > bankroll:
@@ -35,7 +42,6 @@ def martingale_european(bankroll):
         bankroll_history.append(bankroll)
     return bankroll_history
     
-    
 #takes a Number n (x(n)) and returns the next fibonacci number
 def fibonacci(n):
     if n == 1 or n == 2:
@@ -49,7 +55,7 @@ def fibonacci(n):
 
 def fibonacci_strategy(bankroll):
     fibonacci_number = 1
-    pockets = ["Red"] * 18 + ["Black"] * 18 + ["Green"] * 2
+    pockets = get_us_pockets()
     bankroll_history = []
     while bankroll > 0:
         bet = fibonacci(fibonacci_number) * .01
@@ -70,7 +76,7 @@ def fibonacci_strategy(bankroll):
 #Paroli-System (Reverse Martingale)
 #double the bet with every win
 def reverse_martingale(bankroll):
-    pockets = ["Red"] * 18 + ["Black"] * 18 + ["Green"] * 2
+    pockets = get_us_pockets()
     bankroll_history = []
     bet = .01
     previous_win = False
@@ -88,11 +94,36 @@ def reverse_martingale(bankroll):
         bankroll_history.append(bankroll)
     return bankroll_history
 
+#Oskars Grind
+def oskars_grind(bankroll, target_profit, unit, pockets):
+    bankroll_history = []
+    bet_size = unit
+    profit = 0
+
+    while(bankroll > 0):
+        if(profit >= target_profit):
+            break
+        roll = random.choice(pockets)
+        if(roll == 'Red'):
+            bankroll = bankroll + bet_size
+            profit = profit + bet_size
+            if(profit + bet_size + unit > unit):
+                bet_size = unit - profit
+            else:
+                bet_size = bet_size + unit 
+        else:
+            profit = profit - bet_size
+            bankroll = bankroll- bet_size
+        bankroll_history.append(bankroll)
+
+
+    return bankroll_history
+
 
 sns.set(rc={'figure.figsize':(13.7,8.27)})
 
-for i in range(20):
-    plt.plot(martingale_european(bankroll=100), linewidth=2)
+for i in range(30):
+    plt.plot(oskars_grind(bankroll=100, target_profit=10, unit=10, pockets=get_us_pockets), linewidth=2)
     
     
 plt.xlabel("Number of Games", fontsize=18, fontweight="bold")
